@@ -53,16 +53,20 @@ public class PasswordController {
 
     }
     @PostMapping("/updatePasswordById/{id}")
-    public ResponseEntity<Password> updatePasswordById(@PathVariable Long id, @RequestBody Password newPasswordData){
+    public ResponseEntity<Password> updatePasswordById(@PathVariable Long id, @RequestBody Password newPasswordData) {
         Optional<Password> oldPasswordData = passwordRepo.findById(id);
 
-        if(oldPasswordData.isPresent()){
+        if (oldPasswordData.isPresent()) {
             Password updatedPasswordData = oldPasswordData.get();
-            updatedPasswordData.setPassword(passwordEncryptionService.encryptPassword(newPasswordData.getPassword()));
+            updatedPasswordData.setPassword(newPasswordData.getPassword());
+            updatedPasswordData.setEncPassword(passwordEncryptionService.encryptPassword(newPasswordData.getPassword()));
+            updatedPasswordData.setApplication(newPasswordData.getApplication());
+            updatedPasswordData.setServiceAccount(newPasswordData.getServiceAccount());
+            updatedPasswordData.setEncryptionKey(newPasswordData.getEncryptionKey());
+            updatedPasswordData.setProcessDate(newPasswordData.getProcessDate());
 
             Password passwordObj = passwordRepo.save(updatedPasswordData);
             return new ResponseEntity<>(passwordObj, HttpStatus.OK);
-
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);

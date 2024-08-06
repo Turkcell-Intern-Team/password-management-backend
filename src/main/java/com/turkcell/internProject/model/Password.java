@@ -1,17 +1,10 @@
 package com.turkcell.internProject.model;
 
 import jakarta.persistence.*;
-import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name="SERVICE_ACCOUNT_USER_PASSWORD")
-@NoArgsConstructor
-@AllArgsConstructor
-@Setter
-@Getter
-@ToString
 public class Password {
     @Id
     @Column(name = "APPLICATION", length = 50)
@@ -32,6 +25,31 @@ public class Password {
     @Column(name = "PROCESS_DATE")
     private LocalDateTime processDate;
 
+    // Getters and Setters
+
+    public String getApplication() {
+        return application;
+    }
+
+    public void setApplication(String application) {
+        this.application = application;
+    }
+
+    public String getServiceAccount() {
+        return serviceAccount;
+    }
+
+    public void setServiceAccount(String serviceAccount) {
+        this.serviceAccount = serviceAccount;
+    }
+
+    public String getEncryptionKey() {
+        return encryptionKey;
+    }
+
+    public void setEncryptionKey(String encryptionKey) {
+        this.encryptionKey = encryptionKey;
+    }
 
     public String getPassword() {
         return password;
@@ -39,5 +57,21 @@ public class Password {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getEncPassword() {
+        return encPassword;
+    }
+
+    public void setEncPassword(String encPassword) {
+        this.encPassword = encPassword;
+    }
+
+    public LocalDateTime getProcessDate() {
+        return processDate;
+    }
+
+    public void setProcessDate(LocalDateTime processDate) {
+        this.processDate = processDate;
     }
 }
