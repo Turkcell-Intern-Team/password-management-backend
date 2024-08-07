@@ -23,9 +23,9 @@ public class PasswordController {
 
     @Autowired
     private PasswordHistoryRepo passwordHistoryRepo;
-
     @Autowired
     private PasswordEncryptionService passwordEncryptionService;
+
 
     @GetMapping("/getAllPasswords")
     public ResponseEntity<List<Password>> getAllPasswords() {
@@ -63,10 +63,11 @@ public class PasswordController {
         if (oldPasswordData.isPresent()) {
             Password updatedPasswordData = oldPasswordData.get();
 
-            // Eski şifreyi geçmiş tablosuna kaydet
+            // Eski şifre ve şifrelenmiş hali geçmiş tablosuna kaydet
             PasswordHistory history = new PasswordHistory();
             history.setPasswordId(updatedPasswordData.getId());
-            history.setOldPassword(updatedPasswordData.getEncPassword()); // Şifrelenmiş hali kaydediliyor
+            history.setOldPassword(updatedPasswordData.getPassword());
+            history.setOldEncryptedPassword(updatedPasswordData.getEncPassword());
             history.setProcessDate(updatedPasswordData.getProcessDate());
             passwordHistoryRepo.save(history);
 
@@ -84,5 +85,35 @@ public class PasswordController {
         }
 
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @PostMapping("/undoPasswordUpdate/{passwordId}")
+    public ResponseEntity<Password> undoPasswordUpdate(@PathVariable Long passwordId) {
+        try {
+            // En son kaydedilen geçmiş kaydını al
+            Optional<PasswordHistory> historyRecord = passwordHistoryRepo.findTopByPasswordIdOrderByProcessDateDesc(passwordId);
+
+            if (historyRecord.isPresent()) {
+                PasswordHistory history = historyRecord.get();
+
+                // Şifre tablosunu eski şifre ve şifrelenmiş hali ile güncelle
+                Optional<Password> passwordData = passwordRepo.findById(passwordId);
+                if (passwordData.isPresent()) {
+                    Password password = passwordData.get();
+                    password.setPassword(history.getOldPassword()); // Eski açık şifre
+                    password.setEncPassword(history.getOldEncryptedPassword()); // Eski şifrelenmiş şifre
+                    password.setProcessDate(history.getProcessDate());
+
+                    Password updatedPassword = passwordRepo.save(password);
+                    return new ResponseEntity<>(updatedPassword, HttpStatus.OK);
+                } else {
+                    return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+                }
+            } else {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception ex) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }

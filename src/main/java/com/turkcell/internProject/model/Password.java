@@ -21,7 +21,7 @@ public class Password {
     @Column(name = "ENCRYPTION_KEY", length = 50)
     private String encryptionKey;
 
-    @Column(name = "PASSWORD", length = 50, nullable = false)
+    @Column(name = "PASSWORD", length = 250, nullable = false)
     private String password;
 
     @Column(name = "ENC_PASSWORD", length = 250)

@@ -17,6 +17,9 @@ public class PasswordHistory {
     @Column(name = "OLD_PASSWORD", length = 250)
     private String oldPassword;
 
+    @Column(name = "OLD_ENCRYPTED_PASSWORD", length = 250)
+    private String oldEncryptedPassword;
+
     @Column(name = "PROCESS_DATE")
     private LocalDateTime processDate;
 
@@ -43,6 +46,14 @@ public class PasswordHistory {
 
     public void setOldPassword(String oldPassword) {
         this.oldPassword = oldPassword;
+    }
+
+    public String getOldEncryptedPassword() {
+        return oldEncryptedPassword;
+    }
+
+    public void setOldEncryptedPassword(String oldEncryptedPassword) {
+        this.oldEncryptedPassword = oldEncryptedPassword;
     }
 
     public LocalDateTime getProcessDate() {
